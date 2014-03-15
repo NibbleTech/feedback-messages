@@ -1,6 +1,6 @@
 <?php
 
-namespace Gig2gig\Facades;
+namespace Gig2gig\Support\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
