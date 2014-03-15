@@ -1,0 +1,19 @@
+{
+    "name": "weeble/feedback-messages",
+    "version": "0.1",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Shaun Walker",
+            "email": "shaunwalker@nibbletech.co.uk"
+        }
+    ],
+    "require-dev": {
+        "phpspec/phpspec": "2.0.*@dev"
+    },
+    "autoload": {
+        "psr-0" : {
+            "Weeble\\" : "src"
+        }
+    }
+}

@@ -1,0 +1,5 @@
+suites:
+    weeble_feedback_suite:
+        namespace: Weeble
+        src_path: src
+        spec_path: .
