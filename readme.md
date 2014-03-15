@@ -4,7 +4,12 @@ A package to make it really easy to pass and retrieve messages within the sessio
 
 ## Installation
 
-I am sorting out getting it on packagist, check back soon.
+### Composer
+
+Add the package to your `composer.json` file:
+```
+"weeble/feedback-messages": "dev-master"
+```
 
 ### Laravel
 In laravel add the following to your ```app.php```:
