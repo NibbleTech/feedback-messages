@@ -1,8 +1,6 @@
 ## Feedback Messages support class
 
-My start at getting all my agnostic stuff packaged up.
-
-Isnt interfaced yet, tests? lol (later)
+A package to make it really easy to pass and retrieve messages within the session.
 
 ## Installation
 
@@ -12,7 +10,7 @@ In laravel add the following to your ```app.php```:
 		...
 		...
 
-		'Weeble\FeedbackServiceProvider'
+		'Weeble\Support\FeedbackServiceProvider'
 
 	),
 
