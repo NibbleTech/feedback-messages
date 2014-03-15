@@ -23,11 +23,11 @@ class Feedback {
 	 * @return void
 	 * @author Shaun Walker (shaunwalker@nibbletech.co.uk)
 	 **/
-	public function error($message, $name = null)
+	public function error($message, $channel = null)
 	{
-		if(is_null($name) || empty($name)) $name = $this->defaultName;
+		if(is_null($channel) || empty($channel)) $channel = $this->defaultName;
 
-		$this->setFeedback($name, 'error', $message);
+		$this->add($channel, 'error', $message);
 	}
 
 	/**
@@ -36,11 +36,11 @@ class Feedback {
 	 * @return void
 	 * @author Shaun Walker (shaunwalker@nibbletech.co.uk)
 	 **/
-	public function info($message, $name = null)
+	public function info($message, $channel = null)
 	{
-		if(is_null($name) || empty($name)) $name = $this->defaultName;
+		if(is_null($channel) || empty($channel)) $channel = $this->defaultName;
 
-		$this->setFeedback($name, 'info', $message);
+		$this->add($channel, 'info', $message);
 	}
 
 	/**
@@ -49,11 +49,11 @@ class Feedback {
 	 * @return void
 	 * @author Shaun Walker (shaunwalker@nibbletech.co.uk)
 	 **/
-	public function success($message, $name = null)
+	public function success($message, $channel = null)
 	{
-		if(is_null($name) || empty($name)) $name = $this->defaultName;
+		if(is_null($channel) || empty($channel)) $channel = $this->defaultName;
 
-		$this->setFeedback($name, 'success', $message);
+		$this->add($channel, 'success', $message);
 	}
 
 	/**
@@ -62,13 +62,13 @@ class Feedback {
 	 * @return void
 	 * @author Shaun Walker (shaunwalker@nibbletech.co.uk)
 	 **/
-	private function setFeedback($name, $type, $message)
+	public function add($channel, $type, $message)
 	{
 		$message = new Message($message, $type);
 
-		if( ! isset( $this->feedback[$name] ) ) $this->feedback[$name] = [];
+		if( ! isset( $this->feedback[$channel] ) ) $this->feedback[$channel] = [];
 		
-		array_push($this->feedback[$name], $message);
+		array_push($this->feedback[$channel], $message);
 		
 		$this->setSessionData();
 	}
@@ -115,14 +115,14 @@ class Feedback {
 		return $this->feedback;
 	}
 
-	public function merge(array $messages, $type = 'error', $name = null)
+	public function merge(array $messages, $type = 'error', $channel = null)
 	{
-		if( is_null($name) ) $name = $this->defaultName;
+		if( is_null($channel) ) $channel = $this->defaultName;
 		foreach ($messages as $message) {
 			if( is_array($message) ){
 				$this->merge($message);
 			}else{
-				$this->setFeedback($name, $type, $message);
+				$this->add($channel, $type, $message);
 			}
 		}
 	}

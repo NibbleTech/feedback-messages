@@ -53,13 +53,14 @@ class FeedbackSpec extends ObjectBehavior
 
     function it_adds_an_error_message(){
         // Add 1 message
-        $this->error($this->testMessages[0]['message']);
+        $this->add('channel', 'type', 'message');
 
 
         $this->all()->shouldHaveCount(1);
 
         // Check message is returned in getting errors
-        $this->byType('error')->shouldHaveCount(1);
+        $this->byType('type')->shouldHaveCount(1);
+        $this->get('channel')->shouldHaveCount(1);
     }
 
     function it_adds_an_info_message(){
