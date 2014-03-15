@@ -1,6 +1,5 @@
 {
     "name": "weeble/feedback-messages",
-    "version": "0.1",
     "license": "MIT",
     "description": "Simple flash session messages",
     "keywords": ["feedback", "session", "messages"],
