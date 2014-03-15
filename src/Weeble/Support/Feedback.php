@@ -122,7 +122,7 @@ class Feedback {
 			if( is_array($message) ){
 				$this->merge($message);
 			}else{
-				$this->add($channel, $type, $message);
+				$this->add($message, $type, $channel);
 			}
 		}
 	}

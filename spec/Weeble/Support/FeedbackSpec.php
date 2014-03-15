@@ -143,14 +143,16 @@ class FeedbackSpec extends ObjectBehavior
         ];
 
         // Cant run merge() twice in a row for the same group? the 2nd one doesnt get added tp array
-        $this->merge( $messages , 'success', 'group1');
+        $this->merge( $messages , 'success', 'channel1');
 
         $this->byType('success')->shouldHaveCount(3);
+        $this->get('channel1')->shouldHaveCount(3);
 
-        $this->merge( $messages2 , 'error', 'group1');
+        $this->merge( $messages2 , 'error', 'channel2');
 
         $this->byType('error')->shouldHaveCount(5);
+        $this->get('channel2')->shouldHaveCount(5);
 
-        $this->all()->shouldHaveCount(8);
+        $this->all()->shouldHaveCount(2);
     }
 }
