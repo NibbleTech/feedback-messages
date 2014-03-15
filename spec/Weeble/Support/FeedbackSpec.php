@@ -151,6 +151,6 @@ class FeedbackSpec extends ObjectBehavior
 
         $this->byType('error')->shouldHaveCount(5);
 
-        $this->all()->shouldHaveCount(2);
+        $this->all()->shouldHaveCount(8);
     }
 }
