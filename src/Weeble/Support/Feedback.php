@@ -27,7 +27,7 @@ class Feedback {
 	{
 		if(is_null($channel) || empty($channel)) $channel = $this->defaultName;
 
-		$this->add($channel, 'error', $message);
+		$this->add($message, 'error', $channel);
 	}
 
 	/**
@@ -40,7 +40,7 @@ class Feedback {
 	{
 		if(is_null($channel) || empty($channel)) $channel = $this->defaultName;
 
-		$this->add($channel, 'info', $message);
+		$this->add($message, 'info', $channel);
 	}
 
 	/**
@@ -53,7 +53,7 @@ class Feedback {
 	{
 		if(is_null($channel) || empty($channel)) $channel = $this->defaultName;
 
-		$this->add($channel, 'success', $message);
+		$this->add($message, 'success', $channel);
 	}
 
 	/**
@@ -62,7 +62,7 @@ class Feedback {
 	 * @return void
 	 * @author Shaun Walker (shaunwalker@nibbletech.co.uk)
 	 **/
-	public function add($channel, $type, $message)
+	public function add($message, $type, $channel)
 	{
 		$message = new Message($message, $type);
 

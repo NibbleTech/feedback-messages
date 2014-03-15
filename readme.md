@@ -33,18 +33,25 @@ In laravel add the following to your ```app.php```:
 
 ## Usage
 
-Feedback supports 3 types of messages so far `info`, `error` and `success` called respectively as:
+You add messages to the session by passing a message, the message type (e.g 'error') and setting an optional channel (defaults to 'global').
+
+To add a message:
 ```php
-Feedback::info()
-```
-```php
-Feedback::error()
-```
-```php
-Feedback::success()
+Feedback::add('You found a great package!', 'success', 'custom-channel')
 ```
 
-TODO: there will be a standard method call for adding messages, these are just the helpers I use at the moment.
+Feedback supports 3 helper methods so far messages so far, `info`, `error` and `success`.
+These take a message string and an optional 2nd paramater which allows you to set the channel the message goes into, otherwise it defaults to the `global` channel:.
+
+```php
+Feedback::info('message', 'optional-channel')
+```
+```php
+Feedback::error('message')
+```
+```php
+Feedback::success('message')
+```
 
 ### Structure
 
