@@ -1,6 +1,6 @@
 <?php
 
-namespace Gig2gig\Support\Facades;
+namespace Weeble\Support\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
