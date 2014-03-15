@@ -16,7 +16,9 @@ class FeedbackServiceProvider extends ServiceProvider {
 		$this->app['feedback'] = $this->app->share(function($app)
 		{
 			// Return App::make not new Class because using App::make auto resolves dependencies.
-			return \App::make('Weeble\Support\Feedback');
+			return \App::make('Weeble\Support\Feedback', [
+				new SessionHandlers\LaravelSessionHandler
+			]);
 		});
 	}
 }
