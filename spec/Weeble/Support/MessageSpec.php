@@ -26,4 +26,13 @@ class MessageSpec extends ObjectBehavior
     {
     	$this->getType()->shouldReturn("type");
     }
+
+    function it_throws_exception_when_non_string_message_is_passed()
+    {
+        $this->shouldThrow('\InvalidArgumentException')->during__construct(['not a string'], 'error');
+    }
+    function it_throws_exception_when_non_string_type_is_passed()
+    {
+        $this->shouldThrow('\InvalidArgumentException')->during__construct('message', ['not a string error']);
+    }
 }

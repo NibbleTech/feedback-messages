@@ -155,4 +155,9 @@ class FeedbackSpec extends ObjectBehavior
 
         $this->all()->shouldHaveCount(2);
     }
+
+    function it_throws_exception_when_non_string_channel_is_passed()
+    {
+        $this->shouldThrow('\InvalidArgumentException')->duringAdd('message', 'error', ['not a string channel']);
+    }
 }

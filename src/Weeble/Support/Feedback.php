@@ -64,6 +64,8 @@ class Feedback {
 	 **/
 	public function add($message, $type, $channel)
 	{
+		$this->throwOnBadChannel($channel);
+		
 		$message = new Message($message, $type);
 
 		if( ! isset( $this->feedback[$channel] ) ) $this->feedback[$channel] = [];
@@ -135,5 +137,10 @@ class Feedback {
 	private function getSessionData()
 	{
 		return $this->session->get('feedbackMessages');
+	}
+
+	public function throwOnBadChannel($channel)
+	{
+		if( ! is_string( $channel ) ) throw new \InvalidArgumentException("Channel parameter must be a string");
 	}
 }
