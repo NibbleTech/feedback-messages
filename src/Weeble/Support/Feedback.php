@@ -14,7 +14,6 @@ class Feedback {
 
 	function __construct(SessionHandlers\SessionHandlerInterface $sessionHandler) {
 		$this->session = $sessionHandler;
-		$this->feedback = $this->session->get( $this->sessionKey );
 	}
 
 	/**
@@ -131,12 +130,12 @@ class Feedback {
 
 	private function setSessionData()
 	{
-		$this->session->flash('feedbackMessages', $this->feedback);
+		$this->session->flash($this->sessionKey, $this->feedback);
 	}
 
 	private function getSessionData()
 	{
-		return $this->session->get('feedbackMessages');
+		return $this->session->get($this->sessionKey);
 	}
 
 	public function throwOnBadChannel($channel)
