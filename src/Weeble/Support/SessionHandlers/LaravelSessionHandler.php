@@ -13,4 +13,9 @@ class LaravelSessionHandler implements SessionHandlerInterface
 	{
 		\Session::flash($key, $data);
 	}
+
+	public function forget($key)
+	{
+		\Session::forget($key);
+	}
 }
