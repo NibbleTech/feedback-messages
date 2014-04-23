@@ -9,7 +9,7 @@ class Message {
 	function __construct($message, $type) {
 		$this->message = $message;
 		$this->type = $type;
-		$this->checkValues();
+		$this->validate();
 	}
 
 	public function getType()
@@ -23,12 +23,12 @@ class Message {
 	}
 
 	/**
-	 * undocumented function
+	 * Validate data
 	 *
 	 * @return void
 	 * @author 
 	 **/
-	private function checkValues()
+	private function validate()
 	{
 		if( ! is_string($this->message) ) throw new \InvalidArgumentException("Message is not a string");
 
