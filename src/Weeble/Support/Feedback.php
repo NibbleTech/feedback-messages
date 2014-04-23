@@ -71,11 +71,9 @@ class Feedback {
 		
 		$message = new Message($message, $type);
 
-		$feedback = $this->all();
-
-		if( ! isset( $feedback[$channel] ) ) $feedback[$channel] = [];
+		if( ! isset( $this->feedback['new'][$channel] ) ) $this->feedback['new'][$channel] = [];
 		
-		array_push($feedback[$channel], $message);
+		array_push($this->feedback['new'][$channel], $message);
 		
 		$this->setSessionData();
 	}
@@ -158,9 +156,9 @@ class Feedback {
 			$this->session->get( $this->sessionKey . $this->newSuffix )
 		);
 
-		$this->feedback = $this->getSessionData();
-
 		$this->session->forget($this->sessionKey . $this->newSuffix);
+
+		$this->feedback = $this->getSessionData();
 	}
 
 	public function throwOnBadChannel($channel)
