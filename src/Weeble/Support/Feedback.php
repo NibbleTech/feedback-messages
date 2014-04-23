@@ -120,7 +120,7 @@ class Feedback {
 
 	public function all()
 	{
-		return array_merge( $this->feedback['old'] , $this->feedback['new'] );
+		return array_merge_recursive( $this->feedback['old'] , $this->feedback['new'] );
 	}
 
 	public function merge(array $messages, $type = 'error', $channel = null)
