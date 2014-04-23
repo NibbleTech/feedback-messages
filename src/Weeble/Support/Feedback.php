@@ -17,6 +17,7 @@ class Feedback {
 
 	function __construct(SessionHandlers\SessionHandlerInterface $sessionHandler) {
 		$this->session = $sessionHandler;
+		$this->feedback = $this->getSessionData();
 	}
 
 	/**
