@@ -71,9 +71,11 @@ class Feedback {
 		
 		$message = new Message($message, $type);
 
-		if( ! isset( $this->feedback[$channel] ) ) $this->feedback[$channel] = [];
+		$feedback = $this->all();
+
+		if( ! isset( $feedback[$channel] ) ) $feedback[$channel] = [];
 		
-		array_push($this->feedback[$channel], $message);
+		array_push($feedback[$channel], $message);
 		
 		$this->setSessionData();
 	}
@@ -85,10 +87,11 @@ class Feedback {
 	 * @author Shaun Walker (shaunwalker@nibbletech.co.uk)
 	 **/
 	public function get($group){
+		$feedback = $this->all();
 		// If there are no feedback messages return empty array
-		if(empty($this->feedback)) return $this->feedback;
+		if( empty( $feedback ) ) return $feedback;
 		// If named section is set return it, otherwise return empty array to not break foreach's in app
-		if(isset($this->feedback[$group])) return $this->feedback[$group];
+		if( isset( $feedback[$group] ) ) return $feedback[$group];
 
 		return [];
 	}
@@ -101,10 +104,10 @@ class Feedback {
 	 **/
 	public function byType($type){
 
-		if(empty($this->feedback)) return $this->feedback;
+		if( empty( $this->all() ) ) return [];
 
 		$allMessages = [];
-		foreach($this->feedback as $group){
+		foreach( $this->all() as $group){
 			foreach ($group as $groupMessage) {
 
 				if($groupMessage->getType() != $type) break;
@@ -117,7 +120,7 @@ class Feedback {
 
 	public function all()
 	{
-		return $this->feedback;
+		return array_merge( $this->feedback['old'] , $this->feedback['new'] );
 	}
 
 	public function merge(array $messages, $type = 'error', $channel = null)
@@ -134,15 +137,15 @@ class Feedback {
 
 	private function setSessionData()
 	{
-		$this->session->flash($this->sessionKey . $this->newSuffix, $this->feedback);
+		$this->session->flash($this->sessionKey . $this->newSuffix, $this->feedback['new']);
 	}
 
 	private function getSessionData()
 	{
-		return array_merge(
-			$this->session->get($this->sessionKey . $this->oldSuffix),
-			$this->session->get($this->sessionKey . $this->newSuffix)
-		);
+		return [
+			'old' => $this->session->get($this->sessionKey . $this->oldSuffix),
+			'new' => $this->session->get($this->sessionKey . $this->newSuffix)
+		];
 
 	}
 
@@ -152,6 +155,8 @@ class Feedback {
 			$this->sessionKey . $this->oldSuffix,
 			$this->session->get( $this->sessionKey . $this->newSuffix )
 		);
+
+		$this->feedback = $this->getSessionData();
 
 		$this->session->forget($this->sessionKey . $this->newSuffix);
 	}
