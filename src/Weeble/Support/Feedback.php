@@ -104,10 +104,12 @@ class Feedback {
 	 **/
 	public function byType($type){
 
-		if( empty( $this->all() ) ) return [];
+		$feedback = $this->all();
+
+		if( empty( $feedback ) ) return [];
 
 		$allMessages = [];
-		foreach( $this->all() as $group){
+		foreach( $feedback as $group){
 			foreach ($group as $groupMessage) {
 
 				if($groupMessage->getType() != $type) break;
