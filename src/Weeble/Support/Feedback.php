@@ -10,6 +10,9 @@ class Feedback {
 
 	private $sessionKey = 'feedbackMessages';
 
+	private $oldSuffix = '.old';
+	private $newSuffix = '.new';
+
 	private $session;
 
 	function __construct(SessionHandlers\SessionHandlerInterface $sessionHandler) {
@@ -130,12 +133,26 @@ class Feedback {
 
 	private function setSessionData()
 	{
-		$this->session->flash($this->sessionKey, $this->feedback);
+		$this->session->flash($this->sessionKey . $this->newSuffix, $this->feedback);
 	}
 
 	private function getSessionData()
 	{
-		return $this->session->get($this->sessionKey);
+		return array_merge(
+			$this->session->get($this->sessionKey . $this->sessionKey . $this->oldSuffix),
+			$this->session->get($this->sessionKey . $this->sessionKey . $this->newSuffix)
+		);
+
+	}
+
+	public function regenerateSession()
+	{
+		$this->session->flash(
+			$this->sessionKey . $this->oldSuffix,
+			$this->session->get( $this->sessionKey . $this->newSuffix )
+		);
+
+		$this->session->forget($this->sessionKey . $this->newSuffix);
 	}
 
 	public function throwOnBadChannel($channel)

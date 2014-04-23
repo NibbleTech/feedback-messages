@@ -21,4 +21,9 @@ class FeedbackServiceProvider extends ServiceProvider {
 			]);
 		});
 	}
+
+	public function boot()
+	{
+		$this->app['feedback']->regenerateSession();
+	}
 }
