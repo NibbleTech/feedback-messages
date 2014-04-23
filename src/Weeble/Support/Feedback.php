@@ -140,8 +140,8 @@ class Feedback {
 	private function getSessionData()
 	{
 		return array_merge(
-			$this->session->get($this->sessionKey . $this->sessionKey . $this->oldSuffix),
-			$this->session->get($this->sessionKey . $this->sessionKey . $this->newSuffix)
+			$this->session->get($this->sessionKey . $this->oldSuffix),
+			$this->session->get($this->sessionKey . $this->newSuffix)
 		);
 
 	}
