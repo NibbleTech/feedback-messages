@@ -10,14 +10,22 @@ class Feedback {
 
 	private $sessionKey = 'feedbackMessages';
 
-	private $oldSuffix = '.old';
-	private $newSuffix = '.new';
+	private $oldSuffix = 'old';
+	private $newSuffix = 'new';
+
+	private $typeNames = [
+		'success' => 'success',
+		'info' => 'info',
+		'error' => 'error',
+		'warning' => 'warning'
+	];
 
 	private $session;
 
-	function __construct(SessionHandlers\SessionHandlerInterface $sessionHandler) {
+	function __construct(SessionHandlers\SessionHandlerInterface $sessionHandler, MessageFactory $messageFactory) {
 		$this->session = $sessionHandler;
 		$this->feedback = $this->getSessionData();
+		$this->messageFactory = $messageFactory;
 	}
 
 	/**
@@ -28,9 +36,7 @@ class Feedback {
 	 **/
 	public function error($message, $channel = null)
 	{
-		if(is_null($channel) || empty($channel)) $channel = $this->defaultName;
-
-		$this->add($message, 'error', $channel);
+		$this->add($message, $this->typeNames['error'], $channel);
 	}
 
 	/**
@@ -41,9 +47,7 @@ class Feedback {
 	 **/
 	public function info($message, $channel = null)
 	{
-		if(is_null($channel) || empty($channel)) $channel = $this->defaultName;
-
-		$this->add($message, 'info', $channel);
+		$this->add($message, $this->typeNames['info'], $channel);
 	}
 
 	/**
@@ -54,9 +58,18 @@ class Feedback {
 	 **/
 	public function success($message, $channel = null)
 	{
-		if(is_null($channel) || empty($channel)) $channel = $this->defaultName;
+		$this->add($message, $this->typeNames['success'], $channel);
+	}
 
-		$this->add($message, 'success', $channel);
+	/**
+	 * Add warning feedback message
+	 *
+	 * @return void
+	 * @author Shaun Walker (shaunwalker@nibbletech.co.uk)
+	 **/
+	public function warning($message, $channel = null)
+	{
+		$this->add($message, $this->typeNames['warning'], $channel);
 	}
 
 	/**
@@ -67,9 +80,11 @@ class Feedback {
 	 **/
 	public function add($message, $type, $channel)
 	{
+		if(is_null($channel) || empty($channel)) $channel = $this->defaultName;
+
 		$this->throwOnBadChannel($channel);
 		
-		$message = new Message($message, $type);
+		$message = $this->messageFactory->create($message, $type);
 
 		if( ! isset( $this->feedback['new'][$channel] ) ) $this->feedback['new'][$channel] = [];
 		
@@ -110,9 +125,11 @@ class Feedback {
 		foreach( $feedback as $group){
 			foreach ($group as $groupMessage) {
 
-				if($groupMessage->getType() != $type) break;
+				if($groupMessage->getType() == $type){
+					$allMessages[] = $groupMessage;
+				}
 
-				$allMessages[] = $groupMessage;
+				
 			}
 		}
 		return $allMessages;
@@ -120,7 +137,7 @@ class Feedback {
 
 	public function all()
 	{
-		return array_merge_recursive( $this->feedback['old'] , $this->feedback['new'] );
+		return array_merge_recursive( $this->feedback[ $this->oldSuffix ] , $this->feedback[ $this->newSuffix ] );
 	}
 
 	public function merge(array $messages, $type = 'error', $channel = null)
@@ -137,14 +154,15 @@ class Feedback {
 
 	private function setSessionData()
 	{
-		$this->session->flash($this->sessionKey . $this->newSuffix, $this->feedback['new']);
+		$this->session->flash($this->sessionKey . '.' . $this->newSuffix, $this->feedback['new']);
+		// $this->session->flash($this->sessionKey . '.' . $this->newSuffix, $this->feedback['new']);
 	}
 
 	private function getSessionData()
 	{
 		return [
-			'old' => $this->session->get($this->sessionKey . $this->oldSuffix),
-			'new' => $this->session->get($this->sessionKey . $this->newSuffix)
+			$this->oldSuffix => $this->session->get($this->sessionKey . '.' . $this->oldSuffix),
+			$this->newSuffix => $this->session->get($this->sessionKey . '.' . $this->newSuffix)
 		];
 
 	}
@@ -152,11 +170,11 @@ class Feedback {
 	public function regenerateSession()
 	{
 		$this->session->flash(
-			$this->sessionKey . $this->oldSuffix,
-			$this->session->get( $this->sessionKey . $this->newSuffix )
+			$this->sessionKey . '.' . $this->oldSuffix,
+			$this->session->get( $this->sessionKey . '.' . $this->newSuffix )
 		);
 
-		$this->session->forget($this->sessionKey . $this->newSuffix);
+		$this->session->forget($this->sessionKey . '.' . $this->newSuffix);
 
 		$this->feedback = $this->getSessionData();
 	}
@@ -164,5 +182,17 @@ class Feedback {
 	public function throwOnBadChannel($channel)
 	{
 		if( ! is_string( $channel ) ) throw new \InvalidArgumentException("Channel parameter must be a string");
+	}
+
+	public function setNames($names)
+	{
+		array_merge($this->typeNames, $names);
+	}
+
+
+
+	public function test()
+	{
+		return $this->feedback;
 	}
 }

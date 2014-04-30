@@ -19,15 +19,20 @@ class FeedbackSpec extends ObjectBehavior
         ['message' => 'Test message 5',
         'type' => 'info'],
     ];
-	function let($session)
+
+    private $sessionKey = "feedbackMessages";
+    private $oldSuffix = "old";
+    private $newSuffix = "new";
+	function let($session, $messageFactory)
 	{
-		$session->beADoubleOf('Weeble\Support\SessionHandlers\LaravelSessionHandler');
-		$this->beConstructedWith($session);
+        $session->beADoubleOf('Weeble\Support\SessionHandlers\LaravelSessionHandler');
+		$messageFactory->beADoubleOf('Weeble\Support\MessageFactory');
+		$this->beConstructedWith($session, $messageFactory);
 	}
     public function getMatchers()
     {
         return [
-            'beArrayOfAmount' => function($subject, $number) {
+            'beArrayOfCount' => function($subject, $number) {
                 return count($subject) == $number;
             },
         ];
@@ -40,35 +45,36 @@ class FeedbackSpec extends ObjectBehavior
 
     function it_should_start_with_an_empty_feedback_array($session)
     {
-        $session->get('feedbackMessages')->willReturn([]);
-        $this->all()->shouldReturn([]);
+        $session->get($this->sessionKey . '.' . $this->oldSuffix)->willReturn([]);
+        $session->get($this->sessionKey . '.' . $this->newSuffix)->willReturn([]);
 
+        $this->all()->shouldHaveCount(0);
     }
 
-    function it_gets_empty_array_when_session_is_empty($session)
-    {
-        $session->get('feedbackMessages')->willReturn([]);
-        $this->all()->shouldReturn([]);
-    }
+    function it_adds_an_error_message($session, $messageFactory, \Weeble\Support\Message $message){
 
-    function it_adds_an_error_message(){
+        $messageFactory->create('error message', 'error')->willReturn($message);
+
+        $session->flash($this->sessionKey . '.' . $this->newSuffix, Argument::any())->shouldBeCalled();
+
+        $session->get($this->sessionKey . '.' . $this->oldSuffix)->willReturn([]);
+        $session->get($this->sessionKey . '.' . $this->newSuffix)->willReturn(
+            ['global' => [
+                $message
+            ]]
+        );
+
         // Add 1 message
-        $this->add('message', 'type', 'channel');
-
-
-        $this->all()->shouldHaveCount(1);
+        $this->error('error message');
 
         // Check message is returned in getting errors
-        $this->byType('type')->shouldHaveCount(1);
-        $this->get('channel')->shouldHaveCount(1);
+        $this->byType('error')->shouldHaveCount(1);
+
     }
 
     function it_adds_an_info_message(){
         // Add 1 message
         $this->info($this->testMessages[0]['message']);
-
-
-        $this->all()->shouldHaveCount(1);
 
         // Check message is returned in getting errors
         $this->byType('info')->shouldHaveCount(1);
@@ -77,9 +83,6 @@ class FeedbackSpec extends ObjectBehavior
     function it_adds_an_success_message(){
         // Add 1 message
         $this->success($this->testMessages[0]['message']);
-
-
-        $this->all()->shouldHaveCount(1);
 
         // Check message is returned in getting errors
         $this->byType('success')->shouldHaveCount(1);
