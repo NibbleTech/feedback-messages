@@ -13,7 +13,7 @@ class Feedback {
 	private $oldSuffix = 'old';
 	private $newSuffix = 'new';
 
-	private $cssAlias = [
+	private $typeAlias = [
 		'success' => 'success',
 		'info' => 'info',
 		'error' => 'error',
