@@ -13,7 +13,7 @@ class Feedback {
 	private $oldSuffix = 'old';
 	private $newSuffix = 'new';
 
-	private $typeNames = [
+	private $cssAlias = [
 		'success' => 'success',
 		'info' => 'info',
 		'error' => 'error',
@@ -36,7 +36,7 @@ class Feedback {
 	 **/
 	public function error($message, $channel = null)
 	{
-		$this->add($message, $this->typeNames['error'], $channel);
+		$this->add($message, 'error', $channel);
 	}
 
 	/**
@@ -47,7 +47,7 @@ class Feedback {
 	 **/
 	public function info($message, $channel = null)
 	{
-		$this->add($message, $this->typeNames['info'], $channel);
+		$this->add($message, 'info', $channel);
 	}
 
 	/**
@@ -58,7 +58,7 @@ class Feedback {
 	 **/
 	public function success($message, $channel = null)
 	{
-		$this->add($message, $this->typeNames['success'], $channel);
+		$this->add($message, 'success', $channel);
 	}
 
 	/**
@@ -69,7 +69,7 @@ class Feedback {
 	 **/
 	public function warning($message, $channel = null)
 	{
-		$this->add($message, $this->typeNames['warning'], $channel);
+		$this->add($message, 'warning', $channel);
 	}
 
 	/**
@@ -85,6 +85,8 @@ class Feedback {
 		$this->throwOnBadChannel($channel);
 		
 		$message = $this->messageFactory->create($message, $type);
+
+		$message->setTypeAlias( $this->typeAlias[$type] );
 
 		if( ! isset( $this->feedback['new'][$channel] ) ) $this->feedback['new'][$channel] = [];
 		
@@ -186,13 +188,7 @@ class Feedback {
 
 	public function setNames($names)
 	{
-		array_merge($this->typeNames, $names);
+		array_merge($this->typeAlias, $names);
 	}
 
-
-
-	public function test()
-	{
-		return $this->feedback;
-	}
 }

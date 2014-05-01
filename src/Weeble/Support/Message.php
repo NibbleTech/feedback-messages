@@ -4,6 +4,7 @@ namespace Weeble\Support;
 
 class Message {
 	protected $type;
+	protected $typeAlias;
 	protected $message;
 
 	function __construct($message, $type) {
@@ -20,6 +21,16 @@ class Message {
 	public function getMessage()
 	{
 		return $this->message;
+	}
+
+	public function getTypeAlias()
+	{
+		return $this->typeAlias;
+	}
+
+	public function setTypeAlias($alias)
+	{
+		$this->typeAlias = $alias;
 	}
 
 	/**
