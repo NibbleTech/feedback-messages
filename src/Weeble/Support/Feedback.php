@@ -186,9 +186,9 @@ class Feedback {
 		if( ! is_string( $channel ) ) throw new \InvalidArgumentException("Channel parameter must be a string");
 	}
 
-	public function setNames($names)
+	public function setTypeAlias($names)
 	{
-		array_merge($this->typeAlias, $names);
+		$this->typeAlias = array_merge($this->typeAlias, $names);
 	}
 
 }
