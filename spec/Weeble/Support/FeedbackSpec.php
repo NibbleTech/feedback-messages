@@ -68,7 +68,7 @@ class FeedbackSpec extends ObjectBehavior
         $this->error('error message');
 
         // Check message is returned in getting errors
-        $this->byType('error')->shouldHaveCount(1);
+        $this->all()->shouldHaveCount(1);
 
     }
 

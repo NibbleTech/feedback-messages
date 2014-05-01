@@ -2,6 +2,8 @@
 
 A package to make it really easy to pass and retrieve messages within the session.
 
+PHPspec tests are red because I have no idea how to mock/stub properly, if you can teach me how to fix it I'll love you.
+
 ## Installation
 
 ### Composer
@@ -73,7 +75,7 @@ The core structure looks like this:
 
 ### All as original structure
 
-To retrieve the core array, retaining the original structure, just call:
+To retrieve an array of all messages just call:
 ```php
 Feedback::all();
 ```
