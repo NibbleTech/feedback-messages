@@ -2,8 +2,6 @@
 
 A package to make it really easy to pass and retrieve messages within the session.
 
-PHPspec tests are red because I have no idea how to mock/stub properly, if you can teach me how to fix it I'll love you.
-
 ## Installation
 
 ### Composer
@@ -42,8 +40,8 @@ To add a message:
 Feedback::add('You found a great package!', 'success', 'custom-channel')
 ```
 
-Feedback supports 3 helper methods so far messages so far, `info`, `error` and `success`.
-These take a message string and an optional 2nd paramater which allows you to set the channel the message goes into, otherwise it defaults to the `global` channel:.
+Feedback uses magic methods to make it really easy to add messages of a certain type, just call the type you want as the function and the package handles the rest.
+These take a message string and an optional 2nd paramater which allows you to set the channel the message goes into, otherwise it defaults to the `global` channel:
 
 ```php
 Feedback::info('message', 'optional-channel')
@@ -53,21 +51,6 @@ Feedback::error('message')
 ```
 ```php
 Feedback::success('message')
-```
-
-### Structure
-
-The messages are stored in an associative array by the channel they are in. The default channel is `global`, you can add messages to whatever channel you wish by passing it as a paramater:
-```php
-Feedback::success('Well done!', 'my-custom-channel');
-```
-
-The core structure looks like this:
-```php
-[
-	'global' => [Message, ...],
-	'other-channel' => [Message, ...]
-]
 ```
 
 
