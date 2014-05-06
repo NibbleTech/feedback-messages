@@ -8,25 +8,24 @@ use Prophecy\Argument;
 class FeedbackSpec extends ObjectBehavior
 {
     private $testMessages = [
-        ['message' => 'Test message 1',
-        'type' => 'error'],
-        ['message' => 'Test message 2',
-        'type' => 'error'],
-        ['message' => 'Test message 3',
-        'type' => 'success'],
-        ['message' => 'Test message 4',
-        'type' => 'success'],
-        ['message' => 'Test message 5',
-        'type' => 'info'],
+        'error' => [
+            ['message' => 'Test error message 1',
+            'type' => 'error'],
+            ['message' => 'Test error message 2',
+            'type' => 'error'],
+            ['message' => 'Test error message 3',
+            'type' => 'error']
+        ],
     ];
 
     private $sessionKey = "feedbackMessages";
     private $oldSuffix = "old";
     private $newSuffix = "new";
-	function let($session, $messageFactory)
+	function let($session, $messageFactory, $message)
 	{
         $session->beADoubleOf('Weeble\Support\SessionHandlers\LaravelSessionHandler');
-		$messageFactory->beADoubleOf('Weeble\Support\MessageFactory');
+        $messageFactory->beADoubleOf('Weeble\Support\MessageFactory');
+		$message->beADoubleOf('Weeble\Support\Message');
 		$this->beConstructedWith($session, $messageFactory);
 	}
     public function getMatchers()
@@ -45,122 +44,152 @@ class FeedbackSpec extends ObjectBehavior
 
     function it_should_start_with_an_empty_feedback_array($session)
     {
-        $session->get($this->sessionKey . '.' . $this->oldSuffix)->willReturn([]);
-        $session->get($this->sessionKey . '.' . $this->newSuffix)->willReturn([]);
+        $session->get(Argument::any())->willReturn([]);
+        $session->get(Argument::any())->willReturn([]);
 
         $this->all()->shouldHaveCount(0);
     }
 
-    function it_adds_an_error_message($session, $messageFactory, \Weeble\Support\Message $message){
-
-        $messageFactory->create('error message', 'error')->willReturn($message);
-
-        $session->flash($this->sessionKey . '.' . $this->newSuffix, Argument::any())->shouldBeCalled();
-
-        $session->get($this->sessionKey . '.' . $this->oldSuffix)->willReturn([]);
-        $session->get($this->sessionKey . '.' . $this->newSuffix)->willReturn(
-            ['global' => [
-                $message
-            ]]
-        );
+    function it_adds_an_error_message($session, $messageFactory, $message){
+        // Mock message creation
+        $messageFactory->create('Error test message', 'error', 'global')->willReturn($message);
+        $message->setTypeAlias(Argument::type('string'))->shouldBeCalled();
+        // Mock session calls
+        $session->flash('feedbackMessages.new', Argument::any())->shouldBeCalled();
+        $session->get('feedbackMessages.old')->willReturn([]);
+        $session->get('feedbackMessages.new')->willReturn([]);
 
         // Add 1 message
-        $this->error('error message');
+        $this->error('Error test message');
 
         // Check message is returned in getting errors
         $this->all()->shouldHaveCount(1);
-
     }
 
-    function it_adds_an_info_message(){
+    function it_adds_an_info_message($session, $messageFactory, $message){
+        // Mock message creation
+        $messageFactory->create('Info test message', 'info', 'global')->willReturn($message);
+        $message->setTypeAlias(Argument::type('string'))->shouldBeCalled();
+        // Mock session calls
+        $session->flash('feedbackMessages.new', Argument::any())->shouldBeCalled();
+        $session->get('feedbackMessages.old')->willReturn([]);
+        $session->get('feedbackMessages.new')->willReturn([]);
+
         // Add 1 message
-        $this->info($this->testMessages[0]['message']);
+        $this->info('Info test message');
 
         // Check message is returned in getting errors
-        $this->byType('info')->shouldHaveCount(1);
+        $this->all()->shouldHaveCount(1);
     }
 
-    function it_adds_an_success_message(){
+    function it_adds_an_success_message($session, $messageFactory, $message){
+        // Mock message creation
+        $messageFactory->create('Success test message', 'success', 'global')->willReturn($message);
+        $message->setTypeAlias(Argument::type('string'))->shouldBeCalled();
+        // Mock session calls
+        $session->flash('feedbackMessages.new', Argument::any())->shouldBeCalled();
+        $session->get('feedbackMessages.old')->willReturn([]);
+        $session->get('feedbackMessages.new')->willReturn([]);
+
         // Add 1 message
-        $this->success($this->testMessages[0]['message']);
+        $this->success('Success test message');
 
         // Check message is returned in getting errors
-        $this->byType('success')->shouldHaveCount(1);
+        $this->all()->shouldHaveCount(1);
     }
 
-    function it_can_add_messages_to_different_groups(){
-        // Add 1 message
-        $this->success($this->testMessages[0]['message'], 'group1');
-        $this->success($this->testMessages[0]['message'], 'group2');
-        $this->success($this->testMessages[0]['message'], 'group3');
+    function it_can_get_messages_by_group($session, $messageFactory, $message){
+        // Mock session calls
+        $session->flash('feedbackMessages.new', Argument::any())->shouldBeCalled();
+        $session->get('feedbackMessages.old')->willReturn([]);
+        $session->get('feedbackMessages.new')->willReturn([]);
 
-        $this->all()->shouldHaveCount(3);
+        // Mock message creation
+        $message->setTypeAlias(Argument::type('string'))->shouldBeCalled();
+        $messageFactory->create('Success test message', 'success', 'group1')->willReturn($message);
+
+
+        // mock emssage creation
+        $messageFactory->create('Success test message', 'success', 'group1')->willReturn($message);
+
+        // Create 2nd set of group messages
+        $this->success('Success test message', 'group1');
+        $this->success('Success test message', 'group1');
+
+        // Mock mess calls in the get() method
+        $message->getGroup()->willReturn('group1');
+
+        // Check message is returned in getting errors
+        $this->all()->shouldHaveCount(2);
+        $this->get('group1')->shouldHaveCount(2);
+        $this->get('group2')->shouldHaveCount(0);
     }
 
-    function it_can_get_messages_by_group(){
-        // Add 1 message
-        $this->success($this->testMessages[0]['message'], 'group1');
-        $this->success($this->testMessages[0]['message'], 'group1');
-        $this->success($this->testMessages[0]['message'], 'group1');
-        $this->success($this->testMessages[0]['message'], 'group2');
-        $this->success($this->testMessages[0]['message'], 'group2');
+    function it_gets_empty_array_when_none_existant_group($session, $messageFactory, $message){
+        // Mock session calls
+        $session->get('feedbackMessages.old')->willReturn([]);
+        $session->get('feedbackMessages.new')->willReturn([]);
 
-        $this->get('group1')->shouldHaveCount(3);
-        $this->get('group2')->shouldHaveCount(2);
+        $this->get('non-existant-group')->shouldReturn([]);
     }
 
-    function it_gets_empty_array_when_none_by_group($session){
+    function it_can_get_messages_by_type($session, $messageFactory, $message){
+        // Mock session calls
+        $session->flash('feedbackMessages.new', Argument::any())->shouldBeCalled();
+        $session->get('feedbackMessages.old')->willReturn([]);
+        $session->get('feedbackMessages.new')->willReturn([]);
 
-        $session->get('feedbackMessages')->willReturn([]);
+        // Mock message creation
+        $message->setTypeAlias(Argument::type('string'))->shouldBeCalled();
+        $messageFactory->create('Success test message', 'success', 'global')->willReturn($message);
 
-        $this->get('group1')->shouldReturn([]);
-        $this->get('group2')->shouldReturn([]);
+        // Create 2nd set of group messages
+        $this->success('Success test message');
+        $this->success('Success test message');
+
+        // Mock mess calls in the get() method
+        $message->getType()->willReturn('success');
+
+        // Check message is returned in getting errors
+        $this->all()->shouldHaveCount(2);
+        $this->byType('success')->shouldHaveCount(2);
     }
 
-    function it_can_get_messages_by_type(){
-        // Add 1 message
-        $this->success($this->testMessages[0]['message']);
-        $this->success($this->testMessages[0]['message']);
-        $this->success($this->testMessages[0]['message']);
-        $this->info($this->testMessages[0]['message']);
-        $this->error($this->testMessages[0]['message']);
+    function it_gets_empty_array_when_none_by_type($session, $message){
+        // Mock session calls
+        $session->get('feedbackMessages.old')->willReturn([]);
+        $session->get('feedbackMessages.new')->willReturn([]);
 
-        $this->byType('success')->shouldHaveCount(3);
+        // Mock mess calls in the get() method
+        $message->getType()->willReturn('success');
+
+        // Check message is returned in getting errors
+        $this->byType('none-existant-type')->shouldHaveCount(0);
     }
 
-    function it_gets_empty_array_when_none_by_type($session){
-        
-        $session->get('feedbackMessages')->willReturn([]);
+    function it_can_merge_an_array_of_messages($session, $messageFactory, $message){
+        // Mock session calls
+        $session->flash('feedbackMessages.new', Argument::any())->shouldBeCalled();
+        $session->get('feedbackMessages.old')->willReturn([]);
+        $session->get('feedbackMessages.new')->willReturn([]);
 
-        $this->byType('success')->shouldReturn([]);
-        $this->byType('info')->shouldReturn([]);
-        $this->byType('error')->shouldReturn([]);
-    }
-
-    function it_can_merge_an_array_of_messages(){
         $messages = [
             "Message 1", "Message 2", "Message 3"
         ];
         $messages2 = [
-            "Message 6", "Message 7", "Message 8", "Message 9", "Message 10"
+            "Message 4", "Message 5", "Message 6", "Message 7", "Message 8"
         ];
 
-        // Cant run merge() twice in a row for the same group? the 2nd one doesnt get added tp array
-        $this->merge( $messages , 'success', 'channel1');
+        // Mock message creation
+        $message->setTypeAlias(Argument::type('string'))->shouldBeCalled();
+        $messageFactory->create(Argument::type('string'), 'success', 'channel')->willReturn($message);
 
-        $this->byType('success')->shouldHaveCount(3);
-        $this->get('channel1')->shouldHaveCount(3);
+        $this->merge($messages, 'success', 'channel');
 
-        $this->merge( $messages2 , 'error', 'channel2');
+        $this->all()->shouldHaveCount(3);
 
-        $this->byType('error')->shouldHaveCount(5);
-        $this->get('channel2')->shouldHaveCount(5);
+        $this->merge($messages2, 'success', 'channel');
 
-        $this->all()->shouldHaveCount(2);
-    }
-
-    function it_throws_exception_when_non_string_channel_is_passed()
-    {
-        $this->shouldThrow('\InvalidArgumentException')->duringAdd('message', 'error', ['not a string channel']);
+        $this->all()->shouldHaveCount(8);
     }
 }

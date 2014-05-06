@@ -2,11 +2,12 @@
 
 namespace Weeble\Support;
 
+
 class Feedback {
 	
 	private $feedback = [];
 
-	private $defaultName = 'global';
+	private $defaultChannel = 'global';
 
 	private $sessionKey = 'feedbackMessages';
 
@@ -28,49 +29,21 @@ class Feedback {
 		$this->messageFactory = $messageFactory;
 	}
 
-	/**
-	 * Add an error feedback message
-	 *
-	 * @return void
-	 * @author Shaun Walker (shaunwalker@nibbletech.co.uk)
-	 **/
-	public function error($message, $channel = null)
-	{
-		$this->add($message, 'error', $channel);
-	}
 
 	/**
-	 * Add an informational feedback message
+	 * Magic method for adding messages of $name type
 	 *
 	 * @return void
 	 * @author Shaun Walker (shaunwalker@nibbletech.co.uk)
 	 **/
-	public function info($message, $channel = null)
-	{
-		$this->add($message, 'info', $channel);
-	}
-
-	/**
-	 * Add success feedback message
-	 *
-	 * @return void
-	 * @author Shaun Walker (shaunwalker@nibbletech.co.uk)
-	 **/
-	public function success($message, $channel = null)
-	{
-		$this->add($message, 'success', $channel);
-	}
-
-	/**
-	 * Add warning feedback message
-	 *
-	 * @return void
-	 * @author Shaun Walker (shaunwalker@nibbletech.co.uk)
-	 **/
-	public function warning($message, $channel = null)
-	{
-		$this->add($message, 'warning', $channel);
-	}
+    public function __call($name, $arguments)
+    {
+    	if( isset($arguments[1]) && is_string($arguments[1]) ){
+			$this->add($arguments[0], $name, $arguments[1]);
+		}else{
+			$this->add($arguments[0], $name, $this->defaultChannel);
+		}
+    }
 
 	/**
 	 * Add the feedback message to the array
@@ -80,17 +53,13 @@ class Feedback {
 	 **/
 	public function add($message, $type, $channel)
 	{
-		if(is_null($channel) || empty($channel)) $channel = $this->defaultName;
-
-		$this->throwOnBadChannel($channel);
+		if(is_null($channel)) $channel = $this->defaultChannel;
 		
-		$message = $this->messageFactory->create($message, $type);
+		$message = $this->messageFactory->create($message, $type, $channel);
 
 		$message->setTypeAlias( $this->typeAlias[$type] );
-
-		if( ! isset( $this->feedback['new'][$channel] ) ) $this->feedback['new'][$channel] = [];
 		
-		array_push($this->feedback['new'][$channel], $message);
+		array_push($this->feedback['new'], $message);
 		
 		$this->setSessionData();
 	}
@@ -101,14 +70,17 @@ class Feedback {
 	 * @return array
 	 * @author Shaun Walker (shaunwalker@nibbletech.co.uk)
 	 **/
-	public function get($group){
-		$feedback = $this->all();
+	public function get($channel){
 		// If there are no feedback messages return empty array
-		if( empty( $feedback ) ) return $feedback;
-		// If named section is set return it, otherwise return empty array to not break foreach's in app
-		if( isset( $feedback[$group] ) ) return $feedback[$group];
+		if( empty( $this->all() ) ) return [];
 
-		return [];
+		$get = [];
+		foreach ($this->all() as $message) {
+			if( $message->getGroup() == $channel){
+				$get[] = $message;
+			}
+		}
+		return $get;
 	}
 
 	/**
@@ -119,35 +91,27 @@ class Feedback {
 	 **/
 	public function byType($type){
 
-		$feedback = $this->all();
-
-		if( empty( $feedback ) ) return [];
-
-		$allMessages = [];
-		foreach( $feedback as $group){
-			foreach ($group as $groupMessage) {
-
-				if($groupMessage->getType() == $type){
-					$allMessages[] = $groupMessage;
-				}
-
-				
+		$get = [];
+		foreach ($this->all() as $message) {
+			if( $message->getType() == $type ){
+				$get[] = $message;
 			}
 		}
-		return $allMessages;
+		return $get;
 	}
 
 	public function all()
 	{
-		return array_merge_recursive( $this->feedback[ $this->oldSuffix ] , $this->feedback[ $this->newSuffix ] );
+		return array_merge( $this->feedback[ $this->oldSuffix ] , $this->feedback[ $this->newSuffix ] );
 	}
 
-	public function merge(array $messages, $type = 'error', $channel = null)
+	public function merge(array $messages, $type, $channel = null)
 	{
-		if( is_null($channel) ) $channel = $this->defaultName;
+		if( is_null($channel) ) $channel = $this->defaultChannel;
+
 		foreach ($messages as $message) {
 			if( is_array($message) ){
-				$this->merge($message);
+				$this->merge($message, $type, $channel);
 			}else{
 				$this->add($message, $type, $channel);
 			}

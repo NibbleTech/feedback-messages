@@ -6,10 +6,13 @@ class Message {
 	protected $type;
 	protected $typeAlias;
 	protected $message;
+	protected $group;
 
-	function __construct($message, $type) {
+	function __construct($message, $type, $group) {
 		$this->message = $message;
 		$this->type = $type;
+		$this->typeAlias = $type;
+		$this->group = $group;
 		$this->validate();
 	}
 
@@ -26,6 +29,11 @@ class Message {
 	public function getTypeAlias()
 	{
 		return $this->typeAlias;
+	}
+
+	public function getGroup()
+	{
+		return $this->group;
 	}
 
 	public function setTypeAlias($alias)

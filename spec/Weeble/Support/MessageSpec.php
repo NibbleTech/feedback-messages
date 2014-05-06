@@ -9,7 +9,7 @@ class MessageSpec extends ObjectBehavior
 {
 	function let()
 	{
-		$this->beConstructedWith("message", "type");
+		$this->beConstructedWith("message", "type", "group");
 	}
 
     function it_is_initializable()
@@ -24,15 +24,16 @@ class MessageSpec extends ObjectBehavior
 
     function it_gets_the_type()
     {
-    	$this->getType()->shouldReturn("type");
+        $this->getType()->shouldReturn("type");
     }
-
-    function it_throws_exception_when_non_string_message_is_passed()
+    function it_gets_the_group()
     {
-        $this->shouldThrow('\InvalidArgumentException')->during__construct(['not a string'], 'error');
+        $this->getGroup()->shouldReturn("group");
     }
-    function it_throws_exception_when_non_string_type_is_passed()
+    function it_can_set_and_get_the_type_alias()
     {
-        $this->shouldThrow('\InvalidArgumentException')->during__construct('message', ['not a string error']);
+        $this->getTypeAlias()->shouldReturn("type");
+        $this->setTypeAlias("type alias");
+        $this->getTypeAlias()->shouldReturn("type alias");
     }
 }
