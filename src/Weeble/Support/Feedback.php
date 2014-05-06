@@ -71,11 +71,12 @@ class Feedback {
 	 * @author Shaun Walker (shaunwalker@nibbletech.co.uk)
 	 **/
 	public function get($channel){
+		$feedback = $this->all();
 		// If there are no feedback messages return empty array
-		if( empty( $this->all() ) ) return [];
+		if( empty( $feedback ) ) return [];
 
 		$get = [];
-		foreach ($this->all() as $message) {
+		foreach ($feedback as $message) {
 			if( $message->getGroup() == $channel){
 				$get[] = $message;
 			}
