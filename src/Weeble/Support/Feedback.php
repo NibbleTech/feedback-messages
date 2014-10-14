@@ -29,6 +29,22 @@ class Feedback {
 		$this->messageFactory = $messageFactory;
 	}
 
+	public function success($message, $channel = null)
+	{
+		$this->__call('success', func_get_args());
+	}
+	public function info($message, $channel = null)
+	{
+		$this->__call('info', func_get_args());
+	}
+	public function error($message, $channel = null)
+	{
+		$this->__call('error', func_get_args());
+	}
+	public function warning($message, $channel = null)
+	{
+		$this->__call('warning', func_get_args());
+	}
 
 	/**
 	 * Magic method for adding messages of $name type
@@ -54,13 +70,9 @@ class Feedback {
 	public function add($message, $type, $channel)
 	{
 		if(is_null($channel)) $channel = $this->defaultChannel;
-		
 		$message = $this->messageFactory->create($message, $type, $channel);
-
 		$message->setTypeAlias( $this->typeAlias[$type] );
-		
 		array_push($this->feedback['new'], $message);
-		
 		$this->setSessionData();
 	}
 
@@ -74,7 +86,6 @@ class Feedback {
 		$feedback = $this->all();
 		// If there are no feedback messages return empty array
 		if( empty( $feedback ) ) return [];
-
 		$get = [];
 		foreach ($feedback as $message) {
 			if( $message->getGroup() == $channel){
@@ -91,7 +102,6 @@ class Feedback {
 	 * @author Shaun Walker (shaunwalker@nibbletech.co.uk)
 	 **/
 	public function byType($type){
-
 		$get = [];
 		foreach ($this->all() as $message) {
 			if( $message->getType() == $type ){
@@ -109,7 +119,6 @@ class Feedback {
 	public function merge(array $messages, $type, $channel = null)
 	{
 		if( is_null($channel) ) $channel = $this->defaultChannel;
-
 		foreach ($messages as $message) {
 			if( is_array($message) ){
 				$this->merge($message, $type, $channel);
@@ -140,9 +149,7 @@ class Feedback {
 			$this->sessionKey . '.' . $this->oldSuffix,
 			$this->session->get( $this->sessionKey . '.' . $this->newSuffix )
 		);
-
 		$this->session->forget($this->sessionKey . '.' . $this->newSuffix);
-
 		$this->feedback = $this->getSessionData();
 	}
 
