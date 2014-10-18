@@ -13,25 +13,20 @@ class FeedbackServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app['feedback'] = $this->app->share(function($app)
-		{
-			// Return App::make not new Class because using App::make auto resolves dependencies.
-			return \App::make('Weeble\Support\Feedback', [
-				new SessionHandlers\LaravelSessionHandler
-			]);
-		});
+		$this->app->bind('Weeble\Support\SessionHandlers\SessionHandlerInterface', 'Weeble\Support\SessionHandlers\LaravelSessionHandler');
+		$this->app->singleton('view.feedback', 'Weeble\Support\Feedback');
 	}
 
 	public function boot()
 	{
 		$this->package('weeble/support/feedback', 'weeble/support/feedback', __DIR__ . '/../../');
 
-		$this->app['feedback']->regenerateSession();
-		$this->app['feedback']->setTypeAlias($this->app['config']['weeble/support/feedback::types']);
+		$this->app['view.feedback']->regenerateSession();
+		$this->app['view.feedback']->setTypeAlias($this->app['config']['weeble/support/feedback::types']);
 	}
 
     public function provides()
     {
-        return array('feedback');
+        return array('view.feedback');
     }
 }
