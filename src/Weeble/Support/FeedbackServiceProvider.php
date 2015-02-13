@@ -25,7 +25,7 @@ class FeedbackServiceProvider extends ServiceProvider {
 	public function boot()
 	{
 		$this->app['view.feedback']->regenerateSession();
-		$this->app['view.feedback']->setTypeAlias($this->app['config']['weeble/support/feedback::types']);
+		$this->app['view.feedback']->setTypeAlias($this->app['config']['weeble/support/feedback']['types']);
 	}
 
     public function provides()
