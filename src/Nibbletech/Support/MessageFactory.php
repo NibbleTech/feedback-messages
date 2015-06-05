@@ -1,5 +1,5 @@
 <?php
-namespace Weeble\Support;
+namespace Nibbletech\Support;
 
 class MessageFactory {
 

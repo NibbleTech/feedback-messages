@@ -1,6 +1,6 @@
 <?php
 
-namespace Weeble\Support\Facades;
+namespace Nibbletech\Support\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

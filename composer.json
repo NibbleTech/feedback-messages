@@ -1,9 +1,9 @@
 {
-    "name": "weeble/feedback-messages",
+    "name": "nibbletech/feedback-messages",
     "license": "MIT",
     "description": "Simple flash session messages",
     "keywords": ["feedback", "session", "messages"],
-    "homepage": "http://github.com/Weeblewonder/Feedback-Messages",
+    "homepage": "http://github.com/NibbleTech/feedback-messages",
     "authors": [
         {
             "name": "Shaun Walker",
@@ -11,14 +11,14 @@
         }
     ],
     "require": {
-        "php": ">= 5.4"
+        "php": ">= 5.5"
     },
     "require-dev": {
         "phpspec/phpspec": "2.0.*@dev"
     },
     "autoload": {
         "psr-0" : {
-            "Weeble\\" : "src"
+            "Nibbletech\\" : "src"
         }
     }
 }

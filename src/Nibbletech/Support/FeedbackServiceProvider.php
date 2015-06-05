@@ -1,6 +1,6 @@
 <?php
 
-namespace Weeble\Support;
+namespace Nibbletech\Support;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -15,16 +15,16 @@ class FeedbackServiceProvider extends ServiceProvider {
 	{
 		$this->mergeConfigFrom(
 			__DIR__ . "/../../config/config.php",
-			'weeble/support/feedback'
+			'nibbletech/support/feedback'
 		);
 
-		$this->app->bind('Weeble\Support\SessionHandlers\SessionHandlerInterface', 'Weeble\Support\SessionHandlers\LaravelSessionHandler');
-		$this->app->singleton('feedback', 'Weeble\Support\Feedback');
+		$this->app->bind('Nibbletech\Support\SessionHandlers\SessionHandlerInterface', 'Nibbletech\Support\SessionHandlers\LaravelSessionHandler');
+		$this->app->singleton('feedback', 'Nibbletech\Support\Feedback');
 	}
 
 	public function boot()
 	{
-		$this->app['feedback']->setTypeAlias($this->app['config']['weeble/support/feedback']['types']);
+		$this->app['feedback']->setTypeAlias($this->app['config']['nibbletech/support/feedback']['types']);
 	}
 
     public function provides()

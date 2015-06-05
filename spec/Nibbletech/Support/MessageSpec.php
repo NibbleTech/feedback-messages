@@ -1,6 +1,6 @@
 <?php
 
-namespace spec\Weeble\Support;
+namespace spec\Nibbletech\Support;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -14,7 +14,7 @@ class MessageSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType('Weeble\Support\Message');
+        $this->shouldHaveType('Nibbletech\Support\Message');
     }
 
     function it_gets_the_message()

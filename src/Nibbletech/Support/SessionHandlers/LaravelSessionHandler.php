@@ -1,6 +1,6 @@
 <?php
 
-namespace Weeble\Support\SessionHandlers;
+namespace Nibbletech\Support\SessionHandlers;
 
 class LaravelSessionHandler implements SessionHandlerInterface
 {

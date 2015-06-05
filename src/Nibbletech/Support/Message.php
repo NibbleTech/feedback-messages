@@ -1,6 +1,6 @@
 <?php
 
-namespace Weeble\Support;
+namespace Nibbletech\Support;
 
 class Message {
 	protected $type;

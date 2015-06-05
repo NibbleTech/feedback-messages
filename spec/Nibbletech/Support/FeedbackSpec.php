@@ -1,6 +1,6 @@
 <?php
 
-namespace spec\Weeble\Support;
+namespace spec\Nibbletech\Support;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -23,12 +23,12 @@ class FeedbackSpec extends ObjectBehavior
     private $newSuffix = "new";
 	function let($session, $messageFactory, $message)
 	{
-        $session->beADoubleOf('Weeble\Support\SessionHandlers\LaravelSessionHandler');
+        $session->beADoubleOf('Nibbletech\Support\SessionHandlers\LaravelSessionHandler');
         $session->get('feedbackMessages.old')->willReturn([]);
         $session->get('feedbackMessages.new')->willReturn([]);
 
-        $messageFactory->beADoubleOf('Weeble\Support\MessageFactory');
-		$message->beADoubleOf('Weeble\Support\Message');
+        $messageFactory->beADoubleOf('Nibbletech\Support\MessageFactory');
+		$message->beADoubleOf('Nibbletech\Support\Message');
 		$this->beConstructedWith($session, $messageFactory);
 	}
     public function getMatchers()
@@ -42,7 +42,7 @@ class FeedbackSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType('Weeble\Support\Feedback');
+        $this->shouldHaveType('Nibbletech\Support\Feedback');
     }
 
     function it_should_start_with_an_empty_feedback_array($session)
