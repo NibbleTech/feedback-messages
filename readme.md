@@ -8,7 +8,7 @@ A package to make it really easy to pass and retrieve messages within the sessio
 
 Add the package to your `composer.json` file:
 ```
-"weeble/feedback-messages": "dev-master"
+"nibbletech/feedback-messages": "dev-master"
 ```
 
 ### Laravel
@@ -18,7 +18,7 @@ In laravel add the following to your ```app.php```:
 		...
 		...
 
-		'Weeble\Support\FeedbackServiceProvider'
+		'Nibbletech\Support\FeedbackServiceProvider'
 
 	),
 
@@ -26,7 +26,7 @@ In laravel add the following to your ```app.php```:
 		...
 		...
 
-		'Feedback' => 'Weeble\Support\Facades\Feedback'
+		'Feedback' => 'Nibbletech\Support\Facades\Feedback'
 
 	)
 ```
