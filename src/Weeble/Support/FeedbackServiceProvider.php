@@ -19,16 +19,16 @@ class FeedbackServiceProvider extends ServiceProvider {
 		);
 
 		$this->app->bind('Weeble\Support\SessionHandlers\SessionHandlerInterface', 'Weeble\Support\SessionHandlers\LaravelSessionHandler');
-		$this->app->singleton('view.feedback', 'Weeble\Support\Feedback');
+		$this->app->singleton('feedback', 'Weeble\Support\Feedback');
 	}
 
 	public function boot()
 	{
-		$this->app['view.feedback']->setTypeAlias($this->app['config']['weeble/support/feedback']['types']);
+		$this->app['feedback']->setTypeAlias($this->app['config']['weeble/support/feedback']['types']);
 	}
 
     public function provides()
     {
-        return array('view.feedback');
+        return array('feedback');
     }
 }
