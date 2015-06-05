@@ -5,23 +5,23 @@ namespace Weeble\Support;
 
 class Feedback {
 	
-	private $feedback = [];
+	protected $feedback = [];
 
-	private $defaultChannel = 'global';
+	protected $defaultChannel = 'global';
 
-	private $sessionKey = 'feedbackMessages';
+	protected $sessionKey = 'feedbackMessages';
 
-	private $oldSuffix = 'old';
-	private $newSuffix = 'new';
+	protected $oldSuffix = 'old';
+	protected $newSuffix = 'new';
 
-	private $typeAlias = [
+	protected $typeAlias = [
 		'success' => 'success',
 		'info' => 'info',
 		'error' => 'error',
 		'warning' => 'warning'
 	];
 
-	private $session;
+	protected $session;
 
 	function __construct(SessionHandlers\SessionHandlerInterface $sessionHandler, MessageFactory $messageFactory) {
 		$this->session = $sessionHandler;
@@ -113,6 +113,7 @@ class Feedback {
 
 	public function all()
 	{
+		$this->feedback = $this->getSessionData();
 		return array_merge( $this->feedback[ $this->oldSuffix ] , $this->feedback[ $this->newSuffix ] );
 	}
 
@@ -131,7 +132,6 @@ class Feedback {
 	private function setSessionData()
 	{
 		$this->session->flash($this->sessionKey . '.' . $this->newSuffix, $this->feedback['new']);
-		// $this->session->flash($this->sessionKey . '.' . $this->newSuffix, $this->feedback['new']);
 	}
 
 	private function getSessionData()
@@ -150,7 +150,6 @@ class Feedback {
 			$this->session->get( $this->sessionKey . '.' . $this->newSuffix )
 		);
 		$this->session->forget($this->sessionKey . '.' . $this->newSuffix);
-		$this->feedback = $this->getSessionData();
 	}
 
 	public function throwOnBadChannel($channel)
